@@ -1,19 +1,20 @@
-# UnityMVVM (Alpha)
-
+UnityMVVM (Alpha)
+===
 MVVM Framework for Unity3D
 Tested on Unity3D 5.0.1 Personal
 Inspired from Microsoft's MVVM+Controller,Behaviour via uFrame
 
 by Donghyun You, South Korea.
 
-# What's taking care about
+What's taking care about
+---
 
 KISS http://en.wikipedia.org/wiki/KISS_principle
 DRY http://en.wikipedia.org/wiki/Don%27t_repeat_yourself
 YAGNI http://en.wikipedia.org/wiki/You_aren%27t_gonna_need_it
 
-# Goals
-
+Goals
+---
 MVVM with Unity3D. View with MonoView
 Half-done game application framework.
 
@@ -29,14 +30,16 @@ i18n
 l10n
 code generator(with node-js ejs?)
 
-# Dependencies
+Dependencies
+---
 
 'UniRx' https://github.com/neuecc/UniRx
 'UniLinq' https://github.com/RyotaMurohoshi/UniLinq
 'LINQ-to-GameObject-for-Unity' https://github.com/neuecc/LINQ-to-GameObject-for-Unity
 'JsonFX' https://github.com/jsonfx/jsonfx
 
-# License (MIT)
+License (MIT)
+---
 
 The MIT License (MIT)
 
