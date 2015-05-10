@@ -10,32 +10,48 @@ What's taking care about
 ---
 
 KISS (http://en.wikipedia.org/wiki/KISS_principle)
+
 DRY (http://en.wikipedia.org/wiki/Don%27t_repeat_yourself)
+
 YAGNI (http://en.wikipedia.org/wiki/You_aren%27t_gonna_need_it)
 
 Goals
 ---
-MVVM with Unity3D. View with MonoView.
+MVVM with Unity3D. View with MonoView
+
 Half-done game application framework.
 
-Role all data with View(MonoView)-ViewModel-Model + Manage & Testing tools.
-Role collections with Linq.
-Async Operation with Rx(with UniRx).
-TCP Handling hooker with behaviour.
-Managed Scene Transition.
-Memory Pooling Optimization.
-Finite State Machine for Scene, otherwise.
-Resource Manager.
-i18n.
-l10n.
-code generator(with node-js ejs?).
+Role all data with View(MonoView)-ViewModel-Model + Manage & Testing tools
+
+Role collections with Linq
+
+Async Operation with Rx(with UniRx)
+
+TCP Handling hooker with behaviour
+
+Managed Scene Transition
+
+Memory Pooling Optimization
+
+Finite State Machine for Scene, otherwise
+
+Resource Manager
+
+i18n
+
+l10n
+
+code generator(with node-js ejs?)
 
 Dependencies
 ---
 
 'UniRx' (https://github.com/neuecc/UniRx)
+
 'UniLinq' (https://github.com/RyotaMurohoshi/UniLinq)
+
 'LINQ-to-GameObject-for-Unity' (https://github.com/neuecc/LINQ-to-GameObject-for-Unity)
+
 'JsonFX' (https://github.com/jsonfx/jsonfx)
 
 License (MIT)
