@@ -1,4 +1,4 @@
-UnityMVVM (Alpha)
+UnityMVVM (Under develop)
 ===
 MVVM Framework for Unity3D
 Tested on Unity3D 5.0.1 Personal
