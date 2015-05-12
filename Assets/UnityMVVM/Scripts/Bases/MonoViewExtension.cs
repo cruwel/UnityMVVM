@@ -25,7 +25,15 @@ public static class MonoViewExtension {
 		// inject into main view model
 		// ====================================================================================================================
 
-		var mainViewModelProp = self.GetType ().GetProperty ("MainViewModel");
+		PropertyInfo mainViewModelProp;
+
+		if (self is MonoDictionaryEntityView) {
+			mainViewModelProp = self.GetType ().GetProperty ("MainViewModelDictionary");
+		} else if (self is MonoListEntityView) {
+			mainViewModelProp = self.GetType ().GetProperty ("MainViewModelList");
+		} else {
+			mainViewModelProp = self.GetType ().GetProperty ("MainViewModel");
+		}
 
 		if (mainViewModelProp != null) 
 		{

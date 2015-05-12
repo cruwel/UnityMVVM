@@ -77,11 +77,11 @@ public static class ListEditorView {
 				ColumnList 		= _getColumnList(list),
 				FieldsList		= valType
 									.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.FlattenHierarchy)
-									.Where(field=>field.FieldType.IsValueType || field.FieldType == typeof(string))
+									.Where(field=>field.FieldType.IsValueType || field.FieldType == typeof(string) || typeof(ViewModel).IsAssignableFrom(field.FieldType))
 									.ToArray(),
 				PropertiesList 	= valType
 									.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.FlattenHierarchy)
-									.Where(prop=>prop.PropertyType.IsValueType || prop.PropertyType == typeof(string))
+									.Where(prop=>prop.PropertyType.IsValueType || prop.PropertyType == typeof(string) || typeof(ViewModel).IsAssignableFrom(prop.PropertyType))
 									.ToArray(),
 				EditingValue 	= _getDefaultValue(valType),
 				ValueType		= valType,
@@ -355,13 +355,12 @@ public static class ListEditorView {
 			new string[] {"Key"}
 			.Concat(valType
 			        .GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.FlattenHierarchy)
-			        .Where(field=>field.FieldType.IsValueType || field.FieldType == typeof(string))
+			        .Where(field=>field.FieldType.IsValueType || field.FieldType == typeof(string) || typeof(ViewModel).IsAssignableFrom(field.FieldType))
 			        .Select(field=>field.Name))
 			.Concat(valType
 			        .GetProperties(BindingFlags.Instance | BindingFlags.Public| BindingFlags.FlattenHierarchy)
-			        .Where(prop=>prop.PropertyType.IsValueType || prop.PropertyType == typeof(string))
-			        .Select(prop=>prop.Name)
-			        )
+				    .Where(prop=>prop.PropertyType.IsValueType || prop.PropertyType == typeof(string) || typeof(ViewModel).IsAssignableFrom(prop.PropertyType))
+				    .Select(prop=>prop.Name))
 				.ToArray();
 		}
 		

@@ -13,6 +13,12 @@ public class UserInfo : ViewModel {
 	public ReactiveProperty<string> 	UserID 			{ get; set; }
 	public ReactiveProperty<string> 	Name 			{ get; set; }
 	public ReactiveProperty<DateTime>	LastLoggedIn 	{ get; set; }
+
+	public UserInfo() {
+		UserID 			= new ReactiveProperty<string> ();
+		Name 			= new ReactiveProperty<string> ();
+		LastLoggedIn 	= new ReactiveProperty<DateTime> ();
+	}
 	
 	// ========================================================================================================================
 	// Command delegates

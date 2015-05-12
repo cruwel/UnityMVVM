@@ -6,7 +6,7 @@ using UniLinq; // System.Linq is unsafe on AOT
 using UniRx;
 using System.Reflection;
 
-public class ViewModelManager : Singleton<ViewModelManager> {
+public class ViewModelManagerBase {
 	
 	// ========================================================================================================================
 	// Private Members
@@ -20,7 +20,7 @@ public class ViewModelManager : Singleton<ViewModelManager> {
 	/// <summary>
 	/// Initializes a new instance of the <see cref="ViewModelManager"/> class.
 	/// </summary>
-	public ViewModelManager() 
+	public ViewModelManagerBase() 
 	{
 		// ====================================================================================================================
 		// make empty default containers
@@ -35,29 +35,6 @@ public class ViewModelManager : Singleton<ViewModelManager> {
 		// ====================================================================================================================
 	}
 
-	// ========================================================================================================================
-	// Models
-	// ========================================================================================================================
-
-	[ExportableModel]
-	public ReactiveProperty<UserInfo> Me { get; private set; }
-
-	[ExportableModel]
-	public ReactiveDictionary<string,UserInfo> Friends { get; private set; }
-
-	[ExportableModel]
-	public ReactiveDictionary<int,ItemInfo> Items { get; private set; }
-	
-	[ExportableModel]
-	public Dictionary<int,ItemDesc> ItemDesc { get; private set; }
-	
-	[ExportableModel]
-	public ReactiveDictionary<int,int> IntDicTest { get; private set; }
-
-	[ExportableModel]
-	public ReactiveCollection<int> IntTest { get; private set; }
-	
-	// ========================================================================================================================
 	
 	// ========================================================================================================================
 	// Utilities
@@ -121,4 +98,3 @@ public class ViewModelManager : Singleton<ViewModelManager> {
 		
 	}
 }
-

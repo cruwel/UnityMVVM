@@ -6,50 +6,51 @@ using System.Reflection;
 using UniRx;
 
 [Author("Donghyun You","20150503")]
-public class MonoView : MonoBehaviour {
+public abstract class MonoView : MonoBehaviour {
 	
 	public UnityEvent OnEnabled;
 	public UnityEvent OnDisabled;
 
 	protected CompositeDisposable _disposables = null;
 
-	protected virtual void Awake() 
-	{
-		this.InjectModel ();
-	}
-	
 	protected virtual void OnEnable() 
 	{
 		if (OnEnabled != null) OnEnabled.Invoke();
-		_disposables = new CompositeDisposable ();
+		this.OnSubscribe ();
 	}
 	
 	protected virtual void OnDisable() 
 	{
 		if (OnDisabled != null) OnDisabled.Invoke();
+		this.OnUnsubscribe ();
+	}
+
+	protected virtual void OnSubscribe() {
+		_disposables = new CompositeDisposable ();
+	}
+
+	protected virtual void OnUnsubscribe() {
 		_disposables.Dispose ();
 	}
 
 }
 
 [Author("Donghyun You","20150503")]
-public class MonoView<T> : MonoView where T : ViewModel {
+public abstract class MonoView<T> : MonoView where T : ViewModel {
 
 	public ReactiveProperty<T> MainViewModel { get; private set; }
-
-	protected override void OnEnable ()
+	
+	protected virtual void Awake() 
 	{
-		base.OnEnable ();
+		this.InjectModel ();
+	}
+
+	protected override void OnSubscribe ()
+	{
+		base.OnSubscribe ();
 		_disposables.Add(this.MainViewModel.Subscribe (OnMainViewModelChanged));
 	}
 
-	protected override void OnDisable ()
-	{
-		base.OnDisable ();
-	}
-
-	protected virtual void OnMainViewModelChanged(T model) 
-	{
-	}
+	protected virtual void OnMainViewModelChanged (T model) {}
 
 }

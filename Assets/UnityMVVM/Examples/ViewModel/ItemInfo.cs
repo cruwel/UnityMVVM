@@ -4,7 +4,6 @@ using System.Collections;
 using UniRx;
 
 [Author("Donghyun You","20150503")]
-
 public class ItemInfo : ViewModel {
 
 	// ========================================================================================================================

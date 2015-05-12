@@ -9,7 +9,7 @@ using System.Reflection;
 public class ViewModelEditorView : EditorWindow {
 
 	public class Accesser {
-		public PropertyInfo Info;
+		public MemberInfo Info;
 		public object Carrier;
 	}
 
@@ -18,7 +18,12 @@ public class ViewModelEditorView : EditorWindow {
 	Stack<Accesser>		_oldTargets = new Stack<Accesser> ();
 	Vector2 			_scrollPos 	= Vector2.zero;
 
-	public static void OpenWindow(PropertyInfo prop,object carrier) 
+	public static void Clear() {
+		var window = EditorWindow.GetWindow<ViewModelEditorView>("ViewModel",true);
+		window._oldTargets.Clear ();
+	}
+
+	public static void OpenWindow(MemberInfo prop,object carrier) 
 	{
 		var window = EditorWindow.GetWindow<ViewModelEditorView>("ViewModel",true);
 
@@ -43,12 +48,18 @@ public class ViewModelEditorView : EditorWindow {
 
 		if (Target == null) return;
 
-		var target = Target.Info.GetValue (Target.Carrier, null);
+		var target = (Target.Info is PropertyInfo) ? (Target.Info as PropertyInfo).GetValue (Target.Carrier, null) : (Target.Info as FieldInfo).GetValue (Target.Carrier);
 
 		if (target == null) 
 		{
-			if(GUILayout.Button("Create New Instance of "+Target.Info.PropertyType)) {
-				Target.Info.SetValue(Target.Carrier,EditorTools.GetDefaultValue(Target.Info.PropertyType),null);
+			if(GUILayout.Button("Create New Instance of "+Target.Info.MemberType)) {
+				if(Target.Info is PropertyInfo) {
+					(Target.Info as PropertyInfo).SetValue(Target.Carrier,EditorTools.GetDefaultValue((Target.Info as PropertyInfo).PropertyType),null);
+				}
+				else 
+				{
+					(Target.Info as FieldInfo).SetValue(Target.Carrier,EditorTools.GetDefaultValue((Target.Info as FieldInfo).FieldType));
+				}
 			}
 			return;
 		}
@@ -86,6 +97,11 @@ public class ViewModelEditorView : EditorWindow {
 	/// <param name="target">Target.</param>
 	object _drawSingleProperty(string label,object target,Type type) 
 	{
+		
+		if (type.IsEnum) {
+			return EditorGUILayout.EnumPopup (label,(Enum)target);
+		}
+
 		if (type == typeof(string)) {
 			return EditorGUILayout.TextField (label,target as string) as object;
 		}

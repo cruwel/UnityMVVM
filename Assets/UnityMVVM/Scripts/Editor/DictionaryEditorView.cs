@@ -79,11 +79,11 @@ public static class DictionaryEditorView {
 				ColumnList 		= _getColumnList(dic),
 				FieldsList		= valType
 									.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.FlattenHierarchy)
-									.Where(field=>field.FieldType.IsValueType || field.FieldType == typeof(string))
-									.ToArray(),
+									.Where(field=>field.FieldType.IsValueType || field.FieldType == typeof(string) || typeof(ViewModel).IsAssignableFrom(field.FieldType))
+                					.ToArray(),
 				PropertiesList 	= valType
 									.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.FlattenHierarchy)
-									.Where(prop=>prop.PropertyType.IsValueType || prop.PropertyType == typeof(string))
+									.Where(prop=>prop.PropertyType.IsValueType || prop.PropertyType == typeof(string) || typeof(ViewModel).IsAssignableFrom(prop.PropertyType))
 									.ToArray(),
 				EditingKey 		= _getAutoIncrementalValue(keyType,ref increment),
 				EditingValue 	= EditorTools.GetDefaultValue(valType),
@@ -157,12 +157,27 @@ public static class DictionaryEditorView {
 			} 
 			else 
 			{
+				bool hasAltered = false;
 				foreach(var fieldInfo in info.FieldsList) {
-					fieldInfo.SetValue(info.Body[key],EditorTools.DrawDynamicField(fieldInfo.GetValue(info.Body[key]),fieldInfo.FieldType,GUILayout.Width(info.EntityWidth),GUILayout.Height(info.EntityHeight)));
+					var valueBefore = fieldInfo.GetValue(info.Body[key]);
+					var valueAfter  = EditorTools.DrawDynamicField(valueBefore,fieldInfo.FieldType,GUILayout.Width(info.EntityWidth),GUILayout.Height(info.EntityHeight));
+					if(valueBefore != null && valueAfter != null && valueBefore.GetHashCode() != valueAfter.GetHashCode()) 
+						hasAltered = true;
+					fieldInfo.SetValue(info.Body[key],valueAfter);
 				}
 				
-				foreach(var propInfo in info.PropertiesList) {
-					propInfo.SetValue(info.Body[key],EditorTools.DrawDynamicField(propInfo.GetValue(info.Body[key],null),propInfo.PropertyType,GUILayout.Width(info.EntityWidth),GUILayout.Height(info.EntityHeight)),null);
+				foreach(var propInfo in info.PropertiesList) 
+				{
+					var valueBefore = propInfo.GetValue(info.Body[key],null);
+					var valueAfter = EditorTools.DrawDynamicField(propInfo,info.Body[key],GUILayout.Width(info.EntityWidth),GUILayout.Height(info.EntityHeight));
+					if(valueBefore != null && valueAfter != null && valueBefore.GetHashCode() != valueAfter.GetHashCode()) 
+						hasAltered = true;
+					propInfo.SetValue(info.Body[key],valueAfter,null);
+				}
+
+				// Repopulate if some value has changed.
+				if(hasAltered && info.Body[key] is ViewModel) {
+					(info.Body[key] as ViewModel).Populate();
 				}
 			}
 			
@@ -215,8 +230,8 @@ public static class DictionaryEditorView {
 		
 		if (GUILayout.Button ("Add",GUILayout.Width(info.EntityWidth),GUILayout.Height(info.EntityHeight)))
 		{
-
-			if(info.EditingValue is ViewModel) {
+			if(info.EditingValue is ViewModel) 
+			{
 				(info.EditingValue as ViewModel).Populate();
 			}
 
@@ -226,9 +241,11 @@ public static class DictionaryEditorView {
 			_updateSortedList(info);
 			GUI.FocusControl(null);
 		}
+
 		if (GUILayout.Button ("Add Mount",GUILayout.Width(info.EntityWidth),GUILayout.Height(info.EntityHeight)))
 		{
-			for(int i=0;i<100;i++) {
+			for(int i=0;i<100;i++) 
+			{
 				info.Body.Add(info.EditingKey,info.EditingValue);
 				info.EditingKey 	= _getAutoIncrementalValue(info.KeyType,ref info.AutoIncrement);
 				info.EditingValue 	= EditorTools.GetDefaultValue(info.ValueType);
@@ -383,11 +400,11 @@ public static class DictionaryEditorView {
 				new string[] {"Key"}
 				.Concat(valType
 				        .GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.FlattenHierarchy)
-				        .Where(field=>field.FieldType.IsValueType || field.FieldType == typeof(string))
+				        .Where(field=>field.FieldType.IsValueType || field.FieldType == typeof(string) || typeof(ViewModel).IsAssignableFrom(field.FieldType))
 				        .Select(field=>field.Name))
 				.Concat(valType
 				        .GetProperties(BindingFlags.Instance | BindingFlags.Public| BindingFlags.FlattenHierarchy)
-				        .Where(prop=>prop.PropertyType.IsValueType || prop.PropertyType == typeof(string))
+				        .Where(prop=>prop.PropertyType.IsValueType || prop.PropertyType == typeof(string) || typeof(ViewModel).IsAssignableFrom(prop.PropertyType))
 				        .Select(prop=>prop.Name)
 				        )
 				.ToArray();
@@ -396,22 +413,6 @@ public static class DictionaryEditorView {
 		
 	}
 
-	
-	/// <summary>
-	/// _gets the default value.
-	/// </summary>
-	/// <returns>The default value.</returns>
-	/// <param name="type">Type.</param>
-//	static object _getDefaultValue(Type type) {
-//		
-//		if (type == typeof(string)) {
-//			return "";
-//		} else {
-//			return System.Activator.CreateInstance(type) as object;
-//		}
-//		
-//	}
-	
 	static object _getAutoIncrementalValue(Type type,ref int incrementCache) {
 		
 		if (type == typeof(string)) 

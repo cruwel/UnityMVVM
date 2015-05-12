@@ -4,6 +4,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UniLinq;
+using System.Reflection;
 
 public static class EditorTools {
 	
@@ -113,8 +114,43 @@ public static class EditorTools {
 //		EditorGUILayout.EndHorizontal ();
 //	}
 
-	public static object DrawDynamicField(object target,Type type, params GUILayoutOption[] guiparams) {
+	public static object DrawDynamicField(FieldInfo field,object target,params GUILayoutOption[] guiparams) {
+		
+		if(typeof(ViewModel).IsAssignableFrom(field.FieldType)) 
+		{
+			var value = field.GetValue(target);
+			if(GUILayout.Button(value != null ? value.ToString() : "null",guiparams)) 
+			{
+				ViewModelEditorView.OpenWindow(field,target as object);
+			}
+			return value;
+		}
+		else
+		{
+			return DrawDynamicField(field.GetValue(target),field.FieldType,guiparams);
+		}
+		
+	}
 
+	public static object DrawDynamicField(PropertyInfo prop,object target,params GUILayoutOption[] guiparams) {
+		
+		if(typeof(ViewModel).IsAssignableFrom(prop.PropertyType)) 
+		{
+			var value = prop.GetValue(target,null);
+			if(GUILayout.Button(value != null ? value.ToString() : "null",guiparams)) 
+			{
+				ViewModelEditorView.OpenWindow(prop,target as object);
+			}
+			return value;
+		}
+		else
+		{
+			return DrawDynamicField(prop.GetValue(target,null),prop.PropertyType,guiparams);
+		}
+
+	}
+
+	public static object DrawDynamicField(object target,Type type, params GUILayoutOption[] guiparams) {
 
 		if (type.IsEnum) {
 			return EditorGUILayout.EnumPopup ((Enum)target, guiparams);
@@ -135,8 +171,6 @@ public static class EditorTools {
 		if (type == typeof(DateTime)) {
 			return new DateTime (EditorGUILayout.LongField (((DateTime)target).Ticks, guiparams));
 		}
-
-
 
 		return target;
 	}
